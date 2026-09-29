@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Food Rescue Network</title>
+<style>
+:root{--bg:#f4faf7;--card:#fff;--tx:#0f2a24;--mu:#5b7770;--pr:#0d9488;--pr2:#16a34a;--bd:#d5e8e1;--warn:#d97706;--bad:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1a17;--card:#132824;--tx:#e6f4ef;--mu:#8fb0a7;--bd:#23413b}}
+:root[data-theme="dark"]{--bg:#0b1a17;--card:#132824;--tx:#e6f4ef;--mu:#8fb0a7;--bd:#23413b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--card);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;padding:10px 14px;overflow-x:auto}
+.logo{font-weight:800;color:var(--pr);white-space:nowrap;margin-right:8px}
+nav{display:flex;gap:4px}nav button{border:0;background:none;color:var(--mu);padding:8px 12px;border-radius:99px;cursor:pointer;font:600 14px inherit;white-space:nowrap}
+nav button.on,nav button:hover{background:var(--pr);color:#fff}
+main{max-width:1050px;margin:auto;padding:18px 14px 50px}
+.pg{display:none;animation:f .4s}.pg.on{display:block}@keyframes f{from{opacity:0;transform:translateY(8px)}}
+.hero{background:linear-gradient(135deg,#0d9488,#16a34a);color:#fff;border-radius:24px;padding:38px 24px;text-align:center}
+.hero h1{font-size:clamp(1.7rem,5vw,3rem);margin:0 0 8px;line-height:1.15}
+.flow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:16px 0;font-size:12px;font-weight:700}
+.flow span{background:rgba(255,255,255,.2);padding:4px 10px;border-radius:99px}
+.btn{border:0;background:var(--pr);color:#fff;padding:10px 18px;border-radius:12px;font:700 15px inherit;cursor:pointer;margin:4px}
+.btn.w{background:#fff;color:#0d6b62}.btn:hover{filter:brightness(1.1)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:16px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px}
+.stat b{display:block;font-size:2rem;color:var(--pr)}.stat span{color:var(--mu);font-size:14px}
+h2{margin:26px 0 6px}.mu{color:var(--mu);font-size:14px}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.bar{height:10px;background:var(--bd);border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pr),var(--pr2))}
+.tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;background:var(--bd)}
+.g{background:#dcfce7;color:#166534}.y{background:#fef3c7;color:#92400e}.r{background:#fee2e2;color:#991b1b}
+.map{width:100%;height:auto;background:var(--card);border:1px solid var(--bd);border-radius:18px}
+.map circle{cursor:pointer;stroke:#fff;stroke-width:2}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#0f2a24;color:#fff;padding:12px 20px;border-radius:12px;display:none;z-index:20}
+.note{font-size:12.5px;color:var(--mu);border-left:3px solid var(--warn);padding-left:10px;margin-top:10px}
+.sc{overflow-x:auto}
+</style></head><body>
+<header><span class="logo">🌱 Food Rescue Network</span>
+<nav id="nav"></nav></header>
+<main>
+
+<section class="pg on" id="home">
+<div class="hero"><h1>Turn Surplus Food Into Someone’s Next Meal.</h1>
+<p>An intelligent food rescue network connecting surplus food with communities that need it.</p>
+<div class="flow"><span>Surplus Food</span>→<span>AI Matching</span>→<span>Verified Receiver</span>→<span>Volunteer Pickup</span>→<span>Distribution</span>→<span>Impact</span></div>
+<button class="btn w" onclick="go('donate')">Donate Food</button><button class="btn w" onclick="go('account')">Request Food</button><button class="btn w" onclick="go('account')">Become a Volunteer</button></div>
+<div class="grid" id="hstats"></div>
+<h2>How it works</h2>
+<div class="grid">
+<div class="card"><b>1. Who donates?</b><p class="mu">Restaurants, hotels, canteens, hostels, events, supermarkets and households list surplus edible food.</p></div>
+<div class="card"><b>2. Who receives it?</b><p class="mu">Verified NGOs, shelters and community groups that need food nearby.</p></div>
+<div class="card"><b>3. How is it matched?</b><p class="mu">The AI Matcher scores receivers on distance, quantity fit, deadline and food type.</p></div>
+<div class="card"><b>4. Who picks it up?</b><p class="mu">Nearby volunteers accept the pickup and follow an optimized route.</p></div>
+<div class="card"><b>5. Where does it go?</b><p class="mu">Straight to the matched receiver, confirmed with digital proof of delivery.</p></div>
+<div class="card"><b>6. What impact?</b><p class="mu">Meals, kg saved, people served and CO₂ avoided are tracked live.</p></div></div>
+<div class="note">Trust &amp; safety: organizations and volunteers are verified by admins, every pickup is tracked. The platform does not itself certify food as safe for consumption; donors must follow local food-safety rules.</div>
+</section>
+
+<section class="pg" id="donate">
+<h2>Donate Food</h2>
+<div class="card"><form id="df" onsubmit="return false">
+<div class="row"><div><label>Food name / type</label><input id="dn" value="Veg biryani" required></div>
+<div><label>Category</label><select id="dc"><option value="4">Cooked vegetarian</option><option value="3">Cooked non-vegetarian</option><option value="12">Bakery</option><option value="24">Packed / dry food</option><option value="24">Fruits &amp; vegetables</option></select></div>
+<div><label>Vegetarian?</label><select id="dv"><option value="veg">Vegetarian</option><option value="nonveg">Non-vegetarian</option></select></div>
+<div><label>Quantity (kg)</label><input id="dk" type="number" value="25" min="1"></div>
+<div><label>Estimated servings</label><input id="ds" type="number" value="80" min="1"></div>
+<div><label>Prepared at</label><input id="dp" type="datetime-local"></div>
+<div><label>Pickup deadline (minutes from now)</label><input id="dd" type="number" value="90" min="10"></div>
+<div><label>Pickup location</label><input id="dl" value="Chengalpattu Bus Stand Road"></div>
+<div><label>Contact</label><input id="dt" value="+91 98765 43210"></div></div>
+<label>Description</label><textarea id="dx" rows="2">Freshly cooked, packed in sealed containers.</textarea>
+<label>Food image (optional)</label><input type="file" id="di" accept="image/*">
+<div id="ver" class="mu"></div>
+<button class="btn" onclick="submitDonation()" style="margin-left:0">List Donation</button></form></div>
+<div id="dres"></div>
+<h2>Food Rescue Timer</h2>
+<div class="card" id="timer"><p class="mu">Enter a preparation time above to see the estimated distribution window.</p></div>
+</section>
+
+<section class="pg" id="matcher">
+<h2>AI Food Rescue Matcher</h2>
+<p class="mu">Analyzes quantity, food type, distance, deadline and receiver needs to score every receiver.</p>
+<div class="card"><div class="row">
+<div><label>Servings</label><input id="ms" type="number" value="80"></div>
+<div><label>Food type</label><select id="mt"><option value="veg">Vegetarian</option><option value="nonveg">Non-vegetarian</option></select></div>
+<div><label>Minutes left</label><input id="mm" type="number" value="90"></div></div>
+<button class="btn" style="margin-left:0" onclick="runMatch()">Run AI Matching</button></div>
+<div id="mres"></div>
+<div class="note">Demo uses a transparent scoring model (distance 40, quantity fit 30, time 20, food type 10). No external AI API required.</div>
+</section>
+
+<section class="pg" id="map">
+<h2>Live Food Map</h2>
+<p class="mu">🟢 Surplus food &nbsp;🔵 NGOs &nbsp;🟠 Volunteers &nbsp;🔴 Urgent pickups. Tap a marker.</p>
+<svg class="map" id="mapsvg" viewBox="0 0 640 400"></svg>
+<div class="card" id="minfo" style="margin-top:12px">Select a marker to see details.</div>
+</section>
+
+<section class="pg" id="route">
+<h2>Smart Route Optimization</h2>
+<p class="mu">Volunteer at ⭐, pickups ①②③, receiver 🏠. Nearest-neighbour route is computed live.</p>
+<div class="card"><button class="btn" style="margin-left:0" onclick="shuffleRoute()">Shuffle pickups</button><div id="rinfo"></div>
+<svg class="map" id="rsvg" viewBox="0 0 640 400" style="margin-top:10px"></svg></div>
+</section>
+
+<section class="pg" id="impact">
+<h2>Impact Dashboard</h2>
+<div class="grid" id="istats"></div>
+<div class="grid">
+<div class="card"><b>Food rescued by month (kg)</b><div id="c1"></div></div>
+<div class="card"><b>Donations by food type</b><div id="c2"></div></div>
+<div class="card"><b>Community growth (volunteers)</b><div id="c3"></div></div>
+<div class="card"><b>Pickup success rate</b><div id="c4"></div></div></div>
+<h2>Rescue Prediction <span class="tag y">Estimate</span></h2>
+<div class="card">Based on previous Friday activity, approximately <b>120–150 servings</b> may become available tonight, mostly from event caterers and hostels near the city centre. Simulated data, for planning only.</div>
+</section>
+
+<section class="pg" id="account">
+<h2>Account &amp; Dashboards</h2>
+<div class="card" id="auth"><div class="row">
+<div><label>Name</label><input id="an" value="Demo User"></div>
+<div><label>Role</label><select id="ar"><option>Food Donor</option><option>NGO / Receiver</option><option>Volunteer</option><option>Admin</option></select></div></div>
+<button class="btn" style="margin-left:0" onclick="login()">Create account / Log in</button>
+<p class="mu">Demo mode: pick any role. No password or API keys needed.</p></div>
+<div id="dash"></div>
+</section>
+</main>
+<div id="toast" role="status"></div>
+
+<script>
+var $=function(s){return document.querySelector(s)};
+var PAGES=[['home','Home'],['donate','Donate'],['matcher','AI Matcher'],['map','Live Map'],['route','Smart Route'],['impact','Impact'],['account','Dashboards']];
+$('#nav').innerHTML=PAGES.map(function(p){return '<button data-p="'+p[0]+'">'+p[1]+'</button>'}).join('');
+function go(id){document.querySelectorAll('.pg').forEach(function(e){e.classList.toggle('on',e.id===id)});
+document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.p===id)});window.scrollTo(0,0);
+if(id==='map')drawMap();if(id==='route')drawRoute();if(id==='impact')drawImpact();if(id==='donate')updTimer();}
+$('#nav').onclick=function(e){if(e.target.dataset.p)go(e.target.dataset.p)};
+function toast(m){var t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2600)}
+
+var NGOS=[{n:'Annapoorna Trust',x:150,y:120,need:80,veg:1,eta:25},{n:'Asha Shelter Home',x:470,y:100,need:60,veg:0,eta:35},{n:'Hope Community Kitchen',x:520,y:290,need:150,veg:0,eta:45},{n:'Seva Old-Age Home',x:110,y:300,need:40,veg:1,eta:30}];
+var DONOR={x:300,y:190};
+function km(a,b){return Math.hypot(a.x-b.x,a.y-b.y)/45}
+function match(s,t,m){return NGOS.map(function(n){var d=km(n,DONOR);
+var ds=Math.max(0,1-d/9)*40,cs=(1-Math.min(1,Math.abs(n.need-s)/Math.max(n.need,s)))*30,ts=m>=n.eta?20:20*m/n.eta,tp=(n.veg&&t==='nonveg')?0:10;
+var sc=Math.min(99,Math.round(ds+cs+ts+tp+ (tp?8:0)));
+return {n:n,d:d,sc:sc,why:sc+'% match because this organization is '+d.toFixed(1)+' km away, requires '+n.need+' servings and can collect within '+n.eta+' minutes'+(tp?'.':', but accepts vegetarian food only.')}}).sort(function(a,b){return b.sc-a.sc})}
+function matchHTML(r){return r.map(function(x){return '<div class="card" style="margin-top:10px"><b>'+x.n.n+' — '+x.sc+'% Match</b><div class="bar"><i style="width:'+x.sc+'%"></i></div><span class="mu">'+x.why+'</span></div>'}).join('')}
+function runMatch(){var r=match(+$('#ms').value||1,$('#mt').value,+$('#mm').value||1);$('#mres').innerHTML='<div class="mu" style="margin-top:12px">Analyzing…</div>';setTimeout(function(){$('#mres').innerHTML=matchHTML(r)},500)}
+
+var IMP={meals:12480,kg:3250,vol:420,org:86};
+$('#hstats').innerHTML=[['12,480','Meals Rescued'],['3,250 kg','Food Saved'],['420','Active Volunteers'],['86','Partner Organizations']].map(function(s){return '<div class="card stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>'}).join('');
+
+function updTimer(){var p=$('#dp').value,h=+$('#dc').value,el=$('#timer');
+if(!p){el.innerHTML='<p class="mu">Enter a preparation time above to see the estimated distribution window.</p>';return}
+var end=new Date(p).getTime()+h*3600000,left=(end-Date.now())/60000,tot=h*60,pc=left/tot,c,l;
+if(left<=0||pc<.2){c='r';l='🔴 Critical'}else if(pc<.5){c='y';l='🟡 Urgent'}else{c='g';l='🟢 Safe Distribution Window'}
+el.innerHTML='<span class="tag '+c+'">'+l+'</span><p>'+(left>0?'About <b>'+Math.floor(left/60)+'h '+Math.round(left%60)+'m</b> left in the suggested '+h+'h window.':'The suggested window has passed.')+'</p><div class="bar"><i style="width:'+Math.max(0,Math.min(100,pc*100))+'%"></i></div><div class="note">Informational aid only. It does not replace food-safety regulations or professional inspection.</div>'}
+(function(){var d=new Date(Date.now()-3600000*1.2-new Date().getTimezoneOffset()*60000);$('#dp').value=d.toISOString().slice(0,16);
+['dp','dc'].forEach(function(i){$('#'+i).addEventListener('input',updTimer)});
+$('#di').addEventListener('change',function(){if(this.files[0])$('#ver').innerHTML='<div class="card" style="margin:8px 0"><b>AI verification (demo)</b><br>Detected: Cooked rice dish · Est. quantity: ~25 kg · Classified: Vegetarian<br><span class="mu">Checklist: ☑ sealed containers ☑ labelled with time ☐ temperature noted. Mock result, not a food-safety guarantee.</span></div>'})})();
+
+function submitDonation(){var s=+$('#ds').value,m=+$('#dd').value;if(!$('#dn').value||!s||!m){toast('Please fill the required fields');return}
+var r=match(s,$('#dv').value,m).slice(0,3),id='FRN-'+Math.floor(1000+Math.random()*9000);
+$('#dres').innerHTML='<div class="card" style="margin-top:14px"><span class="tag g">✔ Food donation successfully listed.</span><p><b>Donation ID:</b> '+id+' · <b>Servings:</b> '+s+' · <b>Pickup deadline:</b> '+m+' min · <b>Status:</b> Matching in progress</p><b>Suggested nearby receivers</b>'+matchHTML(r)+'</div>';toast('Donation listed: '+id);updTimer()}
+
+var NS='http://www.w3.org/2000/svg';
+function base(){return '<rect width="640" height="400" fill="var(--bg)"/><path d="M0 250 Q160 200 320 260 T640 220" stroke="#7dd3fc" stroke-width="18" fill="none" opacity=".5"/><g stroke="var(--bd)">'+[80,160,240,320,400,480,560].map(function(v){return '<line x1="'+v+'" y1="0" x2="'+v+'" y2="400"/>'}).join('')+[80,160,240,320].map(function(v){return '<line x1="0" y1="'+v+'" x2="640" y2="'+v+'"/>'}).join('')+'</g>'}
+var FOOD=[{n:'Veg biryani',x:300,y:190,q:'25 kg / 80 servings',m:90,u:0},{n:'Bakery items',x:230,y:80,q:'8 kg / 30 servings',m:200,u:0},{n:'Wedding buffet',x:400,y:330,q:'60 kg / 200 servings',m:30,u:1},{n:'Canteen meals',x:60,y:190,q:'15 kg / 50 servings',m:40,u:1}];
+var VOLS=[{n:'Karthik (bike)',x:340,y:140},{n:'Priya (car)',x:200,y:250},{n:'Arun (bike)',x:560,y:180}];
+function drawMap(){var h=base(),M=[];
+FOOD.forEach(function(f){M.push({x:f.x,y:f.y,c:f.u?'#dc2626':'#16a34a',t:(f.u?'Urgent pickup: ':'Surplus food: ')+f.n,d:'Quantity: '+f.q+' · Distance: '+km(f,DONOR).toFixed(1)+' km · Deadline: '+f.m+' min · Status: '+(f.u?'Urgent, awaiting volunteer':'Available')})});
+NGOS.forEach(function(n){M.push({x:n.x,y:n.y,c:'#2563eb',t:'NGO: '+n.n,d:'Needs '+n.need+' servings · '+(n.veg?'Vegetarian only':'All food types')+' · Distance: '+km(n,DONOR).toFixed(1)+' km · Status: Verified'})});
+VOLS.forEach(function(v){M.push({x:v.x,y:v.y,c:'#f97316',t:'Volunteer: '+v.n,d:'Distance: '+km(v,DONOR).toFixed(1)+' km · Status: Available for pickup'})});
+window._M=M;h+=M.map(function(m,i){return '<circle cx="'+m.x+'" cy="'+m.y+'" r="'+(m.c==='#dc2626'?13:10)+'" fill="'+m.c+'" data-i="'+i+'"/>'}).join('');$('#mapsvg').innerHTML=h}
+$('#mapsvg').addEventListener('click',function(e){var i=e.target.getAttribute&&e.target.getAttribute('data-i');if(i!==null&&i!==undefined){var m=window._M[i];$('#minfo').innerHTML='<b>'+m.t+'</b><br>'+m.d}});
+
+var RP=[{x:120,y:120},{x:260,y:320},{x:430,y:110}],RS={x:340,y:230},RH={x:560,y:300};
+function shuffleRoute(){RP=RP.map(function(){return{x:60+Math.random()*440,y:50+Math.random()*300}});drawRoute();toast('Route recalculated')}
+function drawRoute(){var left=RP.slice(),cur=RS,order=[],dist=0;
+while(left.length){left.sort(function(a,b){return km(a,cur)-km(b,cur)});var n=left.shift();dist+=km(cur,n);order.push(n);cur=n}dist+=km(cur,RH);
+var pts=[RS].concat(order,[RH]),h=base()+'<polyline points="'+pts.map(function(p){return p.x+','+p.y}).join(' ')+'" fill="none" stroke="#0d9488" stroke-width="4" stroke-dasharray="8 6"/>';
+h+='<text x="'+RS.x+'" y="'+(RS.y+6)+'" font-size="24" text-anchor="middle">⭐</text>'+order.map(function(p,i){return '<circle cx="'+p.x+'" cy="'+p.y+'" r="14" fill="#16a34a"/><text x="'+p.x+'" y="'+(p.y+5)+'" text-anchor="middle" fill="#fff" font-weight="700">'+(i+1)+'</text>'}).join('')+'<text x="'+RH.x+'" y="'+(RH.y+8)+'" font-size="28" text-anchor="middle">🏠</text>';
+$('#rsvg').innerHTML=h;$('#rinfo').innerHTML='<p style="margin:10px 0 0"><b>Suggested route:</b> Current location → Pickup 1 → 2 → 3 → Receiver · <b>Distance:</b> '+dist.toFixed(1)+' km · <b>Est. time:</b> '+Math.round(dist/0.35+3*6)+' min (incl. loading)</p>'}
+
+function bars(d,l){var w=300,mx=Math.max.apply(null,d),bw=w/d.length;return '<svg viewBox="0 0 300 150" width="100%">'+d.map(function(v,i){var h=v/mx*110;return '<rect x="'+(i*bw+6)+'" y="'+(120-h)+'" width="'+(bw-12)+'" height="'+h+'" rx="5" fill="#0d9488"/><text x="'+(i*bw+bw/2)+'" y="140" font-size="10" text-anchor="middle" fill="currentColor">'+l[i]+'</text>'}).join('')+'</svg>'}
+function line(d){var mx=Math.max.apply(null,d),p=d.map(function(v,i){return (i*(280/(d.length-1))+10)+','+(130-v/mx*110)}).join(' ');return '<svg viewBox="0 0 300 150" width="100%"><polyline points="'+p+'" fill="none" stroke="#16a34a" stroke-width="3"/></svg>'}
+function donut(d,c,l){var t=d.reduce(function(a,b){return a+b},0),o=0,r=15.9;return '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 42 42" width="130"><circle cx="21" cy="21" r="'+r+'" fill="none" stroke="var(--bd)" stroke-width="6"/>'+d.map(function(v,i){var s='<circle cx="21" cy="21" r="'+r+'" fill="none" stroke="'+c[i]+'" stroke-width="6" stroke-dasharray="'+(v/t*100)+' '+(100-v/t*100)+'" stroke-dashoffset="'+(25-o)+'"/>';o+=v/t*100;return s}).join('')+'</svg><div class="mu">'+l.map(function(x,i){return '<div><span style="color:'+c[i]+'">●</span> '+x+' '+Math.round(d[i]/t*100)+'%</div>'}).join('')+'</div></div>'}
+function drawImpact(){$('#istats').innerHTML=[['12,480','Meals Rescued'],['3,250 kg','Food Waste Prevented'],['9,870','People Served'],['≈ 8.1 t CO₂e','CO₂ Impact (estimate)'],['420','Active Volunteers'],['86','Partner Organizations']].map(function(s){return '<div class="card stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>'}).join('');
+$('#c1').innerHTML=bars([310,380,420,470,540,610],['Apr','May','Jun','Jul','Aug','Sep']);
+$('#c2').innerHTML=donut([45,20,15,12,8],['#0d9488','#16a34a','#f59e0b','#3b82f6','#8b5cf6'],['Cooked veg','Cooked non-veg','Bakery','Packed','Produce']);
+$('#c3').innerHTML=line([80,140,190,250,330,420]);
+$('#c4').innerHTML='<b style="font-size:2rem;color:var(--pr)">94%</b><div class="bar"><i style="width:94%"></i></div><span class="mu">Completed pickups (6% failed or expired)</span>'}
+
+var ROLES={'Food Donor':[['My donations','14 listed · 12 collected'],['Verification','Verified ✔'],['Notifications','Pickup accepted for FRN-4821']],
+'NGO / Receiver':[['Incoming donations','3 matched today (80, 45, 30 servings)'],['People served','9,870 total'],['Notifications','Urgent food request nearby']],
+'Volunteer':[['Points','1,240 · Badge: Community Hero'],['Meals rescued','860 · 142 km travelled'],['Nearby pickup','Wedding buffet, 3.1 km, 30 min left']],
+'Admin':[['Total users','1,024 (Donors 380 · NGOs 86 · Volunteers 420)'],['Pickups','Completed 1,905 · Failed 121'],['Pending verification','NGOs: 3 · Donors: 5']]};
+var BADGES=['First Rescue','10 Meals Saved','100 Meals Saved','Community Hero','Rescue Champion'];
+function login(){var r=$('#ar').value,n=$('#an').value||'User',k=ROLES[r];var h='<h2>Welcome, '+n+' <span class="tag g">'+r+'</span></h2><div class="grid">'+k.map(function(x){return '<div class="card"><b>'+x[0]+'</b><p class="mu">'+x[1]+'</p></div>'}).join('')+'</div>';
+if(r==='Volunteer')h+='<div class="card"><b>Available pickup requests</b><div id="pk">'+[['Wedding hall → Hope Kitchen','200 servings · 4.2 km · 30 min'],['Canteen → Seva Home','50 servings · 2.1 km · 40 min']].map(function(p,i){return '<p>'+p[0]+' — <span class="mu">'+p[1]+'</span> <button class="btn" onclick="this.textContent=\'Accepted ✔\';toast(\'Pickup accepted\')">Accept Pickup</button></p>'}).join('')+'</div></div><h2>Rewards</h2><div class="card">'+BADGES.map(function(b,i){return '<span class="tag '+(i<4?'g':'')+'">🏅 '+b+'</span> '}).join('')+'<p class="mu">Leaderboard: 1. Priya 1,820 · 2. Karthik 1,240 · 3. Arun 980</p></div>';
+if(r==='NGO / Receiver')h+='<div class="card"><b>Request food</b><div class="row"><div><label>Type</label><input value="Cooked meals"></div><div><label>Servings</label><input type="number" value="100"></div></div><button class="btn" style="margin-left:0" onclick="toast(\'Food request submitted\')">Submit request</button></div>';
+if(r==='Admin')h+='<div class="card"><b>Pending verifications</b><p>Green Hands NGO <button class="btn" onclick="this.textContent=\'Verified ✔\';toast(\'NGO verified\')">Verify</button></p><p>Royal Banquet Hall (donor) <button class="btn" onclick="this.textContent=\'Verified ✔\';toast(\'Donor verified\')">Verify</button></p></div>';
+h+='<h2>Notifications</h2><div class="card"><p>🔔 New matching donation · 96% match nearby</p><p>🔔 Pickup reminder in 20 minutes</p><p>🔔 Verification status: approved</p></div>';
+$('#dash').innerHTML=h;toast('Logged in as '+r)}
+go('home');
+</script></body></html>
